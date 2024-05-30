@@ -2,10 +2,17 @@ package com.example.UseCase_TravelPlanner.controller;
 
 import com.example.UseCase_TravelPlanner.entity.Activity;
 import com.example.UseCase_TravelPlanner.entity.AllTravelDetails;
+import com.example.UseCase_TravelPlanner.entity.Itinerary;
+import com.example.UseCase_TravelPlanner.exceptions.InvalidRequestException;
 import com.example.UseCase_TravelPlanner.service.ActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 
 @RestController
@@ -42,5 +49,30 @@ public class ActivityController {
     @GetMapping("/travel")
     public List<AllTravelDetails> getAllTravelDetails() {
         return activityService.getAllTravelDetails();
+    }
+
+    @DeleteMapping("/delete-past")
+    public void deletePastActivities() {
+        activityService.deletePastActivities();
+    }
+
+    @GetMapping("/travel/{startDate}/{endDate}")
+    public List<AllTravelDetails> getTravelDetailsBetweenDates(@PathVariable String startDate, @PathVariable String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime start = LocalDateTime.parse(startDate, formatter);
+        LocalDateTime end = LocalDateTime.parse(endDate, formatter);
+        return activityService.getTravelDetailsBetweenDates(start, end);
+    }
+
+    @GetMapping("/activity/{startTime}/{endTime}")
+    public List<Activity> getActivityByTime(@PathVariable String startTime, @PathVariable String endTime) {
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            LocalDateTime start = LocalDateTime.parse(startTime, formatter);
+            LocalDateTime end = LocalDateTime.parse(endTime, formatter);
+            return activityService.getActivityByTime(start, end);
+        } catch (DateTimeParseException e) {
+            throw new InvalidRequestException("Invalid date format. Please use the ISO date format: yyyy-MM-dd'T'HH:mm:ss");
+        }
     }
 }

@@ -2,18 +2,14 @@ package com.example.UseCase_TravelPlanner.service;
 
 import com.example.UseCase_TravelPlanner.entity.Activity;
 import com.example.UseCase_TravelPlanner.entity.AllTravelDetails;
-import com.example.UseCase_TravelPlanner.entity.Weather;
 import com.example.UseCase_TravelPlanner.exceptions.InvalidRequestException;
 import com.example.UseCase_TravelPlanner.exceptions.NotFoundException;
 import com.example.UseCase_TravelPlanner.repository.ActivityRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.parser.Part;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -94,5 +90,19 @@ public class ActivityService {
 
     public List<AllTravelDetails> getAllTravelDetails() {
         return activityRepository.getAllTravelPlans();
+    }
+
+    public void deletePastActivities() {
+        activityRepository.deleteByEndTimeBefore(LocalDateTime.now());
+    }
+
+    public List<AllTravelDetails> getTravelDetailsBetweenDates(LocalDateTime startDate,
+                                                               LocalDateTime endDate) {
+        return activityRepository.getTravelDetailsBetweenDates(startDate, endDate);
+    }
+
+    public List<Activity> getActivityByTime(LocalDateTime startTime,
+                                            LocalDateTime endTime){
+        return activityRepository.getActivityByTime(startTime, endTime);
     }
 }
