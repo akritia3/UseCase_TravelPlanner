@@ -23,9 +23,9 @@ public class WeatherService {
                 .build();
     }
 
-    public void fetchAndStoreWeatherData(String parameter) {
+    public void fetchAndStoreWeatherData(String location) {
         webClient.get()
-                .uri("/forecast?param=" + parameter)
+                .uri("/forecast?param=" + location)
                 .retrieve()
                 .bodyToMono(WeatherAPIResponse.class)
                 .map(this::convertToEntities)
