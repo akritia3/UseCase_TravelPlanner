@@ -5,6 +5,8 @@ import com.example.UseCase_TravelPlanner.entity.AllTravelDetails;
 import com.example.UseCase_TravelPlanner.entity.Itinerary;
 import com.example.UseCase_TravelPlanner.exceptions.InvalidRequestException;
 import com.example.UseCase_TravelPlanner.service.ActivityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 public class ActivityController {
 
+    private static final Logger log = LoggerFactory.getLogger(ActivityController.class);
     @Autowired
     ActivityService activityService;
 
@@ -67,11 +70,13 @@ public class ActivityController {
     @GetMapping("/activity/{startTime}/{endTime}")
     public List<Activity> getActivityByTime(@PathVariable String startTime, @PathVariable String endTime) {
         try {
+            log.info("reached getActivityByTime without error");
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
             LocalDateTime start = LocalDateTime.parse(startTime, formatter);
             LocalDateTime end = LocalDateTime.parse(endTime, formatter);
             return activityService.getActivityByTime(start, end);
         } catch (DateTimeParseException e) {
+            log.error(e.getMessage());
             throw new InvalidRequestException("Invalid date format. Please use the ISO date format: yyyy-MM-dd'T'HH:mm:ss");
         }
     }

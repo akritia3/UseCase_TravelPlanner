@@ -5,6 +5,8 @@ import com.example.UseCase_TravelPlanner.entity.AllTravelDetails;
 import com.example.UseCase_TravelPlanner.exceptions.InvalidRequestException;
 import com.example.UseCase_TravelPlanner.exceptions.NotFoundException;
 import com.example.UseCase_TravelPlanner.repository.ActivityRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.Optional;
 @Service
 public class ActivityService {
 
+    private static final Logger log = LoggerFactory.getLogger(ActivityService.class);
     @Autowired
     private ActivityRepository activityRepository;
 
@@ -25,8 +28,10 @@ public class ActivityService {
     public Activity getActivityById(Long activityId) {
         Optional<Activity> activity = activityRepository.findById(activityId);
         if (activity.isPresent()) {
+            log.info("Getting Activity by ID: " + activityId);
             return activity.get();
         } else {
+            log.error("activity with id " + activityId + " not found");
             throw new NotFoundException("activity with id " + activityId + " not found");
         }
     }
@@ -38,6 +43,7 @@ public class ActivityService {
     public Activity updateActivity(Long activityId, Activity activity) {
         Optional<Activity> activityOptional = activityRepository.findById(activityId);
         if (activityOptional.isPresent()) {
+            log.info("Updating Activity by ID: " + activityId);
             Activity activityToUpdate = activityOptional.get();
 
             // location update
@@ -56,6 +62,7 @@ public class ActivityService {
                     activityToUpdate.setSetting(activity.getSetting());
                 }
                 else {
+                    log.error("Setting " + activity.getSetting() + " is not supported, can only be indoor or outdoor");
                     throw new InvalidRequestException("Setting can only be outdoor or indoor");
                 }
             }
@@ -74,6 +81,7 @@ public class ActivityService {
 
         // if activityId not found
         else {
+            log.error("activity with id " + activityId + " not found");
             throw new NotFoundException("activity with id " + activityId + " not found");
         }
 
@@ -81,10 +89,12 @@ public class ActivityService {
 
     public String deleteActivity(Long activityId) {
         if (activityRepository.findById(activityId).isPresent()) {
+            log.info("Deleting Activity by ID: " + activityId);
             activityRepository.deleteById(activityId);
             return "Activity with id " + activityId + " deleted successfully";
         }
         else {
+            log.error("activity with id " + activityId + " not found");
             throw new NotFoundException("activity with id " + activityId + " not found");
         }
     }
@@ -94,6 +104,7 @@ public class ActivityService {
     }
 
     public void deletePastActivities() {
+        log.info("Deleting past activities");
         activityRepository.deleteByEndTimeBefore(LocalDateTime.now());
     }
 

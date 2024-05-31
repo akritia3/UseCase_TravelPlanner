@@ -5,6 +5,8 @@ import com.example.UseCase_TravelPlanner.entity.Itinerary;
 import com.example.UseCase_TravelPlanner.exceptions.InvalidRequestException;
 import com.example.UseCase_TravelPlanner.exceptions.NotFoundException;
 import com.example.UseCase_TravelPlanner.repository.ItineraryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.util.Optional;
 
 @Service
 public class ItineraryService {
+    private static final Logger log = LoggerFactory.getLogger(ItineraryService.class);
     @Autowired
     private ItineraryRepository itineraryRepository;
 
@@ -23,9 +26,12 @@ public class ItineraryService {
     public Itinerary getItineraryById(Long itineraryId) {
         Optional<Itinerary> itinerary = itineraryRepository.findById(itineraryId);
         if (itinerary.isPresent()) {
+            log.info("Getting itinerary by itinerary id {}", itineraryId);
             return itinerary.orElse(null);
+        } else {
+            log.error("Itinerary not found with id: " + itineraryId);
+            throw new NotFoundException("itinerary with id " + itineraryId + " not found");
         }
-        throw new NotFoundException("itinerary with id " + itineraryId + " not found");
     }
 
     public Itinerary addItinerary(Itinerary itinerary) {
@@ -35,6 +41,7 @@ public class ItineraryService {
     public Itinerary updateItinerary(Long itineraryId, Itinerary itinerary) {
         Optional<Itinerary> itineraryOptional = itineraryRepository.findById(itineraryId);
         if (itineraryOptional.isPresent()) {
+            log.info("Updating itinerary with itinerary id {}", itineraryId);
             Itinerary itineraryToUpdate = itineraryOptional.get();
 
             // location update
@@ -66,6 +73,7 @@ public class ItineraryService {
 
         // if activityId not found
         else {
+            log.error("Itinerary not found with id: " + itineraryId);
             throw new NotFoundException("itinerary with id " + itineraryId + " not found");
         }
 
@@ -73,10 +81,12 @@ public class ItineraryService {
 
     public String deleteItinerary(Long itineraryId) {
         if (itineraryRepository.findById(itineraryId).isPresent()) {
+            log.info("Deleting itinerary with id {}", itineraryId);
             itineraryRepository.deleteById(itineraryId);
             return "Itinerary with id " + itineraryId + " deleted successfully";
         }
         else {
+            log.error("Itinerary not found with id: " + itineraryId);
             throw new NotFoundException("Itinerary with id " + itineraryId + " not found");
         }
     }

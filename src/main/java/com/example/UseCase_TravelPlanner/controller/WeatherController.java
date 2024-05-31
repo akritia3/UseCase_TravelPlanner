@@ -30,11 +30,12 @@ public class WeatherController {
     @GetMapping("/weatherData")
     public List<WeatherData> getWeatherDataBetween(@RequestParam(required = false) String startTime, @RequestParam(required = false) String endTime) {
         try {
-            log.info("entering try block getWeatherDataBetween");
+            log.info("reached getWeatherDataBetween without error");
             ZonedDateTime start = ZonedDateTime.parse(startTime);
             ZonedDateTime end = ZonedDateTime.parse(endTime);
             return weatherService.getWeatherDataBetween(start, end);
         } catch (DateTimeParseException e) {
+            log.error(e.getMessage());
             throw new InvalidRequestException("Invalid date or time format. Please use the ISO date format: yyyy-MM-dd'T'HH:mm:ss");
         }
     }
