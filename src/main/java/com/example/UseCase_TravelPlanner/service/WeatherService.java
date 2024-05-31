@@ -25,7 +25,9 @@ public class WeatherService {
 
     public void fetchAndStoreWeatherData(String location) {
         webClient.get()
-                .uri("/forecast?param=" + location)
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("location", "42.3478,-71.0466")
+                        .queryParam("apiKey", "pLBLr2bgrJj2Qr1PQKzTxtwqFsFaGa7V").build())
                 .retrieve()
                 .bodyToMono(WeatherAPIResponse.class)
                 .map(this::convertToEntities)

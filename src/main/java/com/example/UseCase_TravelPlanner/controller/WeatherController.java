@@ -3,6 +3,8 @@ package com.example.UseCase_TravelPlanner.controller;
 import com.example.UseCase_TravelPlanner.entity.WeatherData;
 import com.example.UseCase_TravelPlanner.exceptions.InvalidRequestException;
 import com.example.UseCase_TravelPlanner.service.WeatherService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,17 +17,20 @@ import java.util.List;
 
 @RestController
 public class WeatherController {
+    private static final Logger log = LoggerFactory.getLogger(WeatherController.class);
     @Autowired
     private WeatherService weatherService;
 
-    @GetMapping("/fetchWeatherData/{location}")
-    public void fetchWeatherData(@PathVariable String location) {
+    @GetMapping("/fetchWeatherData")
+    public void fetchWeatherData(@RequestParam(required = false) String location) {
+        log.info("Fetching weather data for location: " + location);
         weatherService.fetchAndStoreWeatherData(location);
     }
 
     @GetMapping("/weatherData")
-    public List<WeatherData> getWeatherDataBetween(@RequestParam String startTime, @RequestParam String endTime) {
+    public List<WeatherData> getWeatherDataBetween(@RequestParam(required = false) String startTime, @RequestParam(required = false) String endTime) {
         try {
+            log.info("entering try block getWeatherDataBetween");
             ZonedDateTime start = ZonedDateTime.parse(startTime);
             ZonedDateTime end = ZonedDateTime.parse(endTime);
             return weatherService.getWeatherDataBetween(start, end);
