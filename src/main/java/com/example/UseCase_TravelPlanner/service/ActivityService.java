@@ -25,9 +25,10 @@ public class ActivityService {
     public Activity getActivityById(Long activityId) {
         Optional<Activity> activity = activityRepository.findById(activityId);
         if (activity.isPresent()) {
-            return activity.orElse(null);
+            return activity.get();
+        } else {
+            throw new NotFoundException("activity with id " + activityId + " not found");
         }
-        throw new NotFoundException("activity with id " + activityId + " not found");
     }
 
     public Activity addActivity(Activity activity) {
