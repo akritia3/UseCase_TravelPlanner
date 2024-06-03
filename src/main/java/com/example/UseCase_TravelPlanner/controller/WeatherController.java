@@ -22,9 +22,9 @@ public class WeatherController {
     private WeatherService weatherService;
 
     @GetMapping("/fetchWeatherData")
-    public void fetchWeatherData(@RequestParam(required = false) String location) {
+    public List<WeatherData> fetchWeatherData(@RequestParam String location, @RequestParam String apiKey) {
         log.info("Fetching weather data for location: " + location);
-        weatherService.fetchAndStoreWeatherData(location);
+        return weatherService.fetchAndStoreWeatherData(location, apiKey);
     }
 
     @GetMapping("/weatherData")
