@@ -53,10 +53,10 @@ public class WeatherService {
         log.info("Fetching and storing weather data for location: {}", location);
 
 //        String apiKey = System.getenv("WEATHER_API_KEY");
-//        if (apiKey == null) {
-//            log.error("API Key is not configured.");
-//            throw new InvalidRequestException("API Key is not configured.");
-//        }
+        if (apiKey == null) {
+            log.error("API Key is not configured.");
+            throw new InvalidRequestException("API Key is not configured.");
+        }
 
         WeatherAPIResponse weatherAPIResponse = webClient.get()
                 .uri(uriBuilder -> uriBuilder

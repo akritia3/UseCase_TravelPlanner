@@ -11,9 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 
@@ -61,9 +65,15 @@ public class ActivityController {
 
     @GetMapping("/travel/{startDate}/{endDate}")
     public List<AllTravelDetails> getTravelDetailsBetweenDates(@PathVariable String startDate, @PathVariable String endDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        LocalDateTime start = LocalDateTime.parse(startDate, formatter);
-        LocalDateTime end = LocalDateTime.parse(endDate, formatter);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date start;
+        Date end;
+        try {
+            start = formatter.parse(startDate);
+            end = formatter.parse(endDate);
+        } catch (ParseException e) {
+            throw new RuntimeException("Invalid date format. Please use 'yyyy-MM-dd'.", e);
+        }
         return activityService.getTravelDetailsBetweenDates(start, end);
     }
 
@@ -72,8 +82,8 @@ public class ActivityController {
         try {
             log.info("reached getActivityByTime without error");
             DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-            LocalDateTime start = LocalDateTime.parse(startTime, formatter);
-            LocalDateTime end = LocalDateTime.parse(endTime, formatter);
+            LocalTime start = LocalTime.parse(startTime, formatter);
+            LocalTime end = LocalTime.parse(endTime, formatter);
             return activityService.getActivityByTime(start, end);
         } catch (DateTimeParseException e) {
             log.error(e.getMessage());

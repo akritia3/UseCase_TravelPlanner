@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +39,10 @@ public class ActivityService {
     }
 
     public Activity addActivity(Activity activity) {
+        if (!activity.getSetting().equalsIgnoreCase("outdoor") && !activity.getSetting().equalsIgnoreCase("indoor")) {
+            log.error("Setting " + activity.getSetting() + " is not supported, can only be indoor or outdoor");
+            throw new InvalidRequestException("Setting can only be outdoor or indoor");
+        }
         return activityRepository.save(activity);
     }
 
@@ -105,16 +111,16 @@ public class ActivityService {
 
     public void deletePastActivities() {
         log.info("Deleting past activities");
-        activityRepository.deleteByEndTimeBefore(LocalDateTime.now());
+        activityRepository.deleteByEndTimeBefore(LocalTime.now());
     }
 
-    public List<AllTravelDetails> getTravelDetailsBetweenDates(LocalDateTime startDate,
-                                                               LocalDateTime endDate) {
+    public List<AllTravelDetails> getTravelDetailsBetweenDates(Date startDate,
+                                                               Date endDate) {
         return activityRepository.getTravelDetailsBetweenDates(startDate, endDate);
     }
 
-    public List<Activity> getActivityByTime(LocalDateTime startTime,
-                                            LocalDateTime endTime){
+    public List<Activity> getActivityByTime(LocalTime startTime,
+                                            LocalTime endTime){
         return activityRepository.getActivityByTime(startTime, endTime);
     }
 }

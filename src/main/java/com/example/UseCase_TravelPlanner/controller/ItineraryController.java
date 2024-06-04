@@ -3,6 +3,7 @@ package com.example.UseCase_TravelPlanner.controller;
 import com.example.UseCase_TravelPlanner.entity.Itinerary;
 import com.example.UseCase_TravelPlanner.service.ItineraryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -37,5 +38,10 @@ public class ItineraryController {
     @DeleteMapping("/itinerary/{id}")
     public String deleteItinerary(@PathVariable Long id) {
         return itineraryService.deleteItinerary(id);
+    }
+
+    @GetMapping("/itinerary/{location}")
+    public List<Itinerary> getItineraryByLocation(@Param("location") String location) {
+        return itineraryService.getItineraryByLocation(location);
     }
 }

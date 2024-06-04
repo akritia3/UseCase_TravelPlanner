@@ -8,6 +8,7 @@ import com.example.UseCase_TravelPlanner.repository.ItineraryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -89,5 +90,9 @@ public class ItineraryService {
             log.error("Itinerary not found with id: " + itineraryId);
             throw new NotFoundException("Itinerary with id " + itineraryId + " not found");
         }
+    }
+
+    public List<Itinerary> getItineraryByLocation(String location) {
+        return itineraryRepository.getItineraryByLocation(location);
     }
 }

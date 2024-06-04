@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import com.example.UseCase_TravelPlanner.exceptions.NotFoundException;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -104,6 +105,6 @@ class ActivityServiceTest {
     @Test
     void deletePastActivities() {
         activityService.deletePastActivities();
-        verify(activityRepository).deleteByEndTimeBefore(LocalDateTime.now());
+        verify(activityRepository).deleteByEndTimeBefore(LocalTime.now());
     }
 }
