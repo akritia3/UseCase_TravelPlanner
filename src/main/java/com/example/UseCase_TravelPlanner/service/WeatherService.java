@@ -7,6 +7,7 @@ import com.example.UseCase_TravelPlanner.repository.WeatherDataRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -54,7 +55,7 @@ public class WeatherService {
 
 //        String apiKey = System.getenv("WEATHER_API_KEY");
         if (apiKey == null) {
-            log.error("API Key is not configured.");
+            log.error(HttpStatus.BAD_REQUEST + "API Key is not configured.");
             throw new InvalidRequestException("API Key is not configured.");
         }
 
@@ -68,13 +69,13 @@ public class WeatherService {
                 .block(); // Blocking call to get the response synchronously
 
         if (weatherAPIResponse == null) {
-            log.error("Failed to fetch weather data. API response is null.");
+            log.error(HttpStatus.BAD_GATEWAY + "Failed to fetch weather data. API response is null.");
             throw new InvalidRequestException("Failed to fetch weather data. API response is null.");
         }
 
         List<WeatherData> weatherDataEntities = convertToEntities(weatherAPIResponse);
         if (weatherDataEntities.isEmpty()) {
-            log.error("Failed to convert API response to WeatherDataEntity list.");
+            log.error(HttpStatus.INTERNAL_SERVER_ERROR + "Failed to convert API response to WeatherDataEntity list.");
             throw new InvalidRequestException("Failed to convert API response to WeatherDataEntity list.");
         }
 

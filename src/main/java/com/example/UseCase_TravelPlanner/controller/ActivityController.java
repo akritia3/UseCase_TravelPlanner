@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
@@ -72,6 +73,7 @@ public class ActivityController {
             start = formatter.parse(startDate);
             end = formatter.parse(endDate);
         } catch (ParseException e) {
+            log.error(e.getMessage(), HttpStatus.BAD_REQUEST);
             throw new RuntimeException("Invalid date format. Please use 'yyyy-MM-dd'.", e);
         }
         return activityService.getTravelDetailsBetweenDates(start, end);
@@ -81,13 +83,18 @@ public class ActivityController {
     public List<Activity> getActivityByTime(@PathVariable String startTime, @PathVariable String endTime) {
         try {
             log.info("reached getActivityByTime without error");
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_TIME;
             LocalTime start = LocalTime.parse(startTime, formatter);
             LocalTime end = LocalTime.parse(endTime, formatter);
             return activityService.getActivityByTime(start, end);
         } catch (DateTimeParseException e) {
-            log.error(e.getMessage());
-            throw new InvalidRequestException("Invalid date format. Please use the ISO date format: yyyy-MM-dd'T'HH:mm:ss");
+            log.error(e.getMessage(), HttpStatus.BAD_REQUEST);
+            throw new InvalidRequestException("Invalid format.");
         }
+    }
+
+    @GetMapping("/activity/count")
+    public List<Object[]> countActivitiesByLocation() {
+        return activityService.countActivitiesByLocation();
     }
 }

@@ -19,6 +19,9 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     @Query(value="select new com.example.UseCase_TravelPlanner.entity.AllTravelDetails(i, a) from Itinerary i, Activity a where i.location = a.location")
     public List<AllTravelDetails> getAllTravelPlans();
 
+    @Query(value="select a.location, count(a.location) from Activity a group by a.location order by count(a) desc")
+    public List<Object[]> countActivitiesByLocation();
+
 
     @Query(value="select new com.example.UseCase_TravelPlanner.entity.AllTravelDetails(i, a) from Itinerary i, Activity a where (i.startDate > :startDate) and (i.endDate < :endDate) and (i.location = a.location)")
     public List<AllTravelDetails> getTravelDetailsBetweenDates(@Param("startDate") Date startDate,

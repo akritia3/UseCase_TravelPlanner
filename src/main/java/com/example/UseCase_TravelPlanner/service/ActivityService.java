@@ -8,6 +8,7 @@ import com.example.UseCase_TravelPlanner.repository.ActivityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,14 +34,14 @@ public class ActivityService {
             log.info("Getting Activity by ID: " + activityId);
             return activity.get();
         } else {
-            log.error("activity with id " + activityId + " not found");
+            log.error(HttpStatus.NOT_FOUND + "activity to fetch with id " + activityId + " not found");
             throw new NotFoundException("activity with id " + activityId + " not found");
         }
     }
 
     public Activity addActivity(Activity activity) {
         if (!activity.getSetting().equalsIgnoreCase("outdoor") && !activity.getSetting().equalsIgnoreCase("indoor")) {
-            log.error("Setting " + activity.getSetting() + " is not supported, can only be indoor or outdoor");
+            log.error(HttpStatus.BAD_REQUEST + "Setting to add " + activity.getSetting() + " is not supported, can only be indoor or outdoor");
             throw new InvalidRequestException("Setting can only be outdoor or indoor");
         }
         return activityRepository.save(activity);
@@ -68,7 +69,7 @@ public class ActivityService {
                     activityToUpdate.setSetting(activity.getSetting());
                 }
                 else {
-                    log.error("Setting " + activity.getSetting() + " is not supported, can only be indoor or outdoor");
+                    log.error(HttpStatus.BAD_REQUEST + "Setting to update " + activity.getSetting() + " is not supported, can only be indoor or outdoor");
                     throw new InvalidRequestException("Setting can only be outdoor or indoor");
                 }
             }
@@ -87,7 +88,7 @@ public class ActivityService {
 
         // if activityId not found
         else {
-            log.error("activity with id " + activityId + " not found");
+            log.error(HttpStatus.NOT_FOUND + "activity to update with id " + activityId + " not found");
             throw new NotFoundException("activity with id " + activityId + " not found");
         }
 
@@ -100,7 +101,7 @@ public class ActivityService {
             return "Activity with id " + activityId + " deleted successfully";
         }
         else {
-            log.error("activity with id " + activityId + " not found");
+            log.error(HttpStatus.NOT_FOUND + "activity to delete with id " + activityId + " not found");
             throw new NotFoundException("activity with id " + activityId + " not found");
         }
     }
@@ -122,5 +123,9 @@ public class ActivityService {
     public List<Activity> getActivityByTime(LocalTime startTime,
                                             LocalTime endTime){
         return activityRepository.getActivityByTime(startTime, endTime);
+    }
+
+    public List<Object[]> countActivitiesByLocation() {
+        return activityRepository.countActivitiesByLocation();
     }
 }

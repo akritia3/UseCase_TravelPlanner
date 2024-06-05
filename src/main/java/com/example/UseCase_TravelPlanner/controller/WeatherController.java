@@ -6,6 +6,7 @@ import com.example.UseCase_TravelPlanner.service.WeatherService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,7 @@ public class WeatherController {
             ZonedDateTime end = ZonedDateTime.parse(endTime);
             return weatherService.getWeatherDataBetween(start, end);
         } catch (DateTimeParseException e) {
-            log.error(e.getMessage());
+            log.error(e.getMessage(), HttpStatus.BAD_REQUEST);
             throw new InvalidRequestException("Invalid date or time format. Please use the ISO date format: yyyy-MM-dd'T'HH:mm:ss");
         }
     }

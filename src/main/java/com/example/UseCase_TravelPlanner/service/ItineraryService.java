@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class ItineraryService {
             log.info("Getting itinerary by itinerary id {}", itineraryId);
             return itinerary.orElse(null);
         } else {
-            log.error("Itinerary not found with id: " + itineraryId);
+            log.error(HttpStatus.NOT_FOUND + "Itinerary to fetch not found with id: " + itineraryId);
             throw new NotFoundException("itinerary with id " + itineraryId + " not found");
         }
     }
@@ -74,7 +75,7 @@ public class ItineraryService {
 
         // if activityId not found
         else {
-            log.error("Itinerary not found with id: " + itineraryId);
+            log.error(HttpStatus.NOT_FOUND + "Itinerary to update not found with id: " + itineraryId);
             throw new NotFoundException("itinerary with id " + itineraryId + " not found");
         }
 
@@ -87,7 +88,7 @@ public class ItineraryService {
             return "Itinerary with id " + itineraryId + " deleted successfully";
         }
         else {
-            log.error("Itinerary not found with id: " + itineraryId);
+            log.error(HttpStatus.NOT_FOUND + "Itinerary to delete not found with id: " + itineraryId);
             throw new NotFoundException("Itinerary with id " + itineraryId + " not found");
         }
     }
